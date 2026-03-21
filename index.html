@@ -37,7 +37,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Inter', 'Noto Sans Devanagari', 'Noto Sans Bengali', system-ui, sans-serif; }
+    body { font-family: 'Inter', 'Noto Sans Devanagari', 'Noto Sans Bengali', system-ui, sans-serif; overflow-x: hidden; }
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
@@ -279,11 +279,63 @@
       .bill-scene-right.organized .receipt:nth-child(3) { top: 42% !important; }
     }
 
+    /* Chat animation */
+    @keyframes chatSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .chat-msg { animation: chatSlideIn 0.3s ease-out forwards; }
+
+    /* Typing dots */
+    .typing-dots { display: flex; gap: 2px; align-items: center; padding: 4px 0; }
+    .typing-dots span {
+      width: 3px; height: 3px; border-radius: 50%; background: #E8651A;
+      animation: typingDot 1.4s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot {
+      0%, 60%, 100% { opacity: 0.3; transform: scale(1); }
+      30% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* Hero mic recording pulse */
+    #hero-phone.mic-recording #hero-mic-pulse {
+      animation: heroMicPulse 0.6s ease-out infinite;
+    }
+    #hero-phone.mic-recording #hero-mic {
+      background: #E8651A;
+      border-radius: 9999px;
+      padding: 1px;
+    }
+    #hero-phone.mic-recording #hero-mic svg {
+      color: #fff !important;
+    }
+    @keyframes heroMicPulse {
+      0% { transform: scale(1); opacity: 0.5; }
+      100% { transform: scale(2.8); opacity: 0; }
+    }
+
     /* Gradient border for pricing */
     .gradient-border {
       background: linear-gradient(135deg, rgba(232,101,26,0.3), rgba(139,92,246,0.2), rgba(232,101,26,0.3));
       padding: 2px;
       border-radius: 1.5rem;
+    }
+
+    /* Mobile animation optimizations */
+    @media (max-width: 767px) {
+      .fade-in { transform: translateY(16px); transition: opacity 0.4s ease-out, transform 0.4s ease-out; }
+      .stagger-reveal {
+        transform: translateY(20px) scale(0.98);
+        transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1), transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+        transition-delay: calc(var(--stagger, 0) * 60ms);
+      }
+      .notification-slide {
+        transform: translateX(30px);
+        transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        transition-delay: calc(var(--notif-delay, 0) * 100ms);
+      }
     }
   </style>
 </head>
@@ -343,7 +395,7 @@
             <span class="text-sm font-medium text-karon-300" data-i18n="hero-badge">Made for India</span>
           </div>
           <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.05] text-white mb-6">
-            <span data-i18n="hero-heading-prefix">Bill management for</span>
+            <span data-i18n="hero-heading-prefix">Karon remembers every bill you've ever had.</span><br><span data-i18n="hero-heading-prefix2">Built for</span>
             <span class="block h-[1.5em] overflow-hidden">
               <span class="rotating-words inline-flex flex-col">
                 <span class="gradient-text-bold h-[1.5em] leading-[1.5em]" data-i18n="rotate-1">shopkeepers</span>
@@ -355,11 +407,33 @@
               </span>
             </span>
           </h1>
-          <p class="text-lg md:text-xl text-gray-400 leading-relaxed mb-8 max-w-xl" data-i18n="hero-subtitle">
-            Snap any bill. Ask any question. Get instant clarity &mdash; in
+          <p class="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed mb-6 sm:mb-8 max-w-xl" data-i18n="hero-subtitle">
+            Snap any bill. Ask anything &mdash; <em class="text-gray-300 not-italic">"Where did I spend the most last month?"</em> <em class="text-gray-300 not-italic">"How much GST did I pay last month?"</em> &mdash; in
             <strong class="text-white">Hindi, Bengali</strong> or English.
-            Karon brings AI-powered bill management to your phone.
+            Karon tracks every rupee so you don't have to.
           </p>
+          <!-- Feature highlights -->
+          <div class="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
+            <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-dark-800 border border-dark-600 rounded-lg sm:rounded-xl px-2.5 sm:px-4 py-2 sm:py-2.5">
+              <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <span class="text-xs sm:text-sm font-semibold text-white" data-i18n="float-snap">Snap & Track</span>
+            </div>
+            <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-dark-800 border border-dark-600 rounded-lg sm:rounded-xl px-2.5 sm:px-4 py-2 sm:py-2.5">
+              <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-karon-500/20 flex items-center justify-center">
+                <svg class="w-3 h-3 sm:w-4 sm:h-4 text-karon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+              </div>
+              <span class="text-xs sm:text-sm font-semibold text-white" data-i18n="float-voice">Voice First</span>
+            </div>
+            <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-dark-800 border border-dark-600 rounded-lg sm:rounded-xl px-2.5 sm:px-4 py-2 sm:py-2.5">
+              <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                <svg class="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+              </div>
+              <span class="text-xs sm:text-sm font-semibold text-white" data-i18n="ask-badge">Ask Anything</span>
+            </div>
+          </div>
+
           <div class="flex flex-col sm:flex-row gap-4">
             <a href="#download" class="inline-flex items-center justify-center gap-2 bg-karon-500 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-2xl text-base sm:text-lg font-semibold hover:bg-karon-600 transition-all shadow-xl shadow-karon-500/25 hover:shadow-karon-500/40 cta-shimmer">
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
@@ -397,50 +471,41 @@
           </div>
         </div>
 
-        <!-- Hero phones -->
+        <!-- Hero phone (CSS animated chat) -->
         <div class="fade-in relative flex justify-center px-4 overflow-visible">
-          <div class="relative z-10 flex items-end gap-3 sm:gap-5 md:gap-8 overflow-visible">
-            <!-- Phone 1: Login -->
-            <div class="relative w-[110px] sm:w-[160px] md:w-[220px] -mb-4 phone-float-1">
-              <div class="bg-black rounded-[1.6rem] sm:rounded-[2rem] md:rounded-[2.5rem] p-[5px] sm:p-[6px] md:p-2 shadow-[0_0_40px_rgba(232,101,26,0.15)] border border-neutral-700">
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-12 sm:w-16 md:w-20 h-2.5 sm:h-3 md:h-4 bg-black rounded-b-lg z-20"></div>
-                <div class="relative rounded-[1.3rem] sm:rounded-[1.6rem] md:rounded-[2rem] overflow-hidden">
-                  <img src="images/karon_login.png" alt="Karon login screen" class="w-full h-auto" />
-                  <div class="absolute inset-0 rounded-[inherit] shadow-[inset_0_0_20px_rgba(0,0,0,0.3)] pointer-events-none"></div>
-                </div>
-              </div>
-            </div>
-            <!-- Phone 2: Chat -->
-            <div class="relative w-[130px] sm:w-[180px] md:w-[250px] z-10">
-              <div class="bg-black rounded-[1.8rem] sm:rounded-[2.2rem] md:rounded-[2.8rem] p-[5px] sm:p-[6px] md:p-2 shadow-[0_0_60px_rgba(232,101,26,0.2)] border border-neutral-700">
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-14 sm:w-18 md:w-24 h-2.5 sm:h-3 md:h-4 bg-black rounded-b-lg z-20"></div>
-                <div class="relative rounded-[1.4rem] sm:rounded-[1.8rem] md:rounded-[2.3rem] overflow-hidden">
-                  <img src="images/karon_main_chat_Screen.png" alt="Karon chat interface" class="w-full h-auto" />
-                  <div class="absolute inset-0 rounded-[inherit] shadow-[inset_0_0_20px_rgba(0,0,0,0.3)] pointer-events-none"></div>
-                </div>
-              </div>
-            </div>
-            <!-- Floating: Voice (bottom-right of second phone) -->
-            <div class="hidden sm:block absolute -bottom-5 -right-16 md:-right-24 bg-black/80 border border-neutral-700 rounded-2xl p-3 md:p-4 phone-float-1 z-20">
-              <div class="flex items-center gap-2 md:gap-3">
-                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-karon-500/20 flex items-center justify-center">
-                  <svg class="w-4 h-4 md:w-5 md:h-5 text-karon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
-                </div>
-                <div>
-                  <p class="text-xs md:text-sm font-semibold text-white" data-i18n="float-voice">Voice First</p>
-                  <p class="text-[10px] md:text-xs text-gray-400" data-i18n="float-voice-desc">Speak in your language</p>
-                </div>
-              </div>
-            </div>
-            <!-- Floating: Snap & Track (to the left of Voice First) -->
-            <div class="hidden sm:block absolute -bottom-5 right-[8.25rem] md:right-[12.25rem] bg-black/80 border border-neutral-700 rounded-2xl p-3 md:p-4 phone-float-2 z-20">
-              <div class="flex items-center gap-2 md:gap-3">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                </div>
-                <div>
-                  <p class="text-[10px] sm:text-xs md:text-sm font-semibold text-white" data-i18n="float-snap">Snap & Track</p>
-                  <p class="hidden sm:block text-[10px] md:text-xs text-gray-400" data-i18n="float-snap-desc">AI reads your bills</p>
+          <div class="relative z-10 flex items-end justify-center overflow-visible">
+            <!-- Phone: Chat (CSS animated) -->
+            <div id="hero-phone" class="relative w-[180px] sm:w-[220px] md:w-[280px] z-10">
+              <div class="bg-black rounded-[2rem] sm:rounded-[2.2rem] md:rounded-[2.8rem] p-[6px] sm:p-[7px] md:p-2.5 shadow-[0_0_60px_rgba(232,101,26,0.2)] border border-neutral-700">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-16 sm:w-20 md:w-24 h-3 sm:h-3.5 md:h-4 bg-black rounded-b-xl z-20"></div>
+                <div class="rounded-[1.6rem] sm:rounded-[1.8rem] md:rounded-[2.3rem] overflow-hidden bg-white flex flex-col" style="aspect-ratio: 9/19.5;">
+                  <!-- Chat header -->
+                  <div class="flex items-center gap-1 sm:gap-1.5 md:gap-2 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 border-b border-neutral-100">
+                    <svg class="w-2.5 sm:w-3 md:w-4 h-2.5 sm:h-3 md:h-4 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <p class="text-[7px] sm:text-[9px] md:text-sm font-bold text-karon-500">Karon</p>
+                    <div class="ml-auto w-3 sm:w-4 md:w-5 h-1.5 sm:h-2 md:h-2.5 bg-green-500 rounded-sm"></div>
+                  </div>
+                  <!-- Chat body (JS animated) -->
+                  <div id="hero-chat" class="flex-1 flex flex-col justify-end px-1.5 sm:px-2 md:px-3 pb-1 sm:pb-1.5 md:pb-2 overflow-hidden">
+                    <!-- Welcome message (always visible) -->
+                    <div class="mb-1 sm:mb-1.5 md:mb-2 chat-welcome">
+                      <div class="bg-karon-50 border border-karon-100 rounded-lg sm:rounded-xl px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 max-w-[90%]">
+                        <p class="text-[4px] sm:text-[6px] md:text-[9px] text-neutral-700 leading-relaxed">&#x09AB;&#x09BF;&#x09B0;&#x09C7; &#x0986;&#x09B8;&#x09BE;&#x09B0; &#x099C;&#x09A8;&#x09CD;&#x09AF; &#x09B8;&#x09CD;&#x09AC;&#x09BE;&#x0997;&#x09A4;&#x09AE;, avi!</p>
+                      </div>
+                    </div>
+                    <!-- Dynamic messages inserted by JS -->
+                  </div>
+                  <!-- Chat input bar -->
+                  <div class="flex items-center gap-1 md:gap-1.5 px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 border-t border-neutral-100">
+                    <svg class="w-2 sm:w-3 md:w-4 h-2 sm:h-3 md:h-4 text-karon-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+                    <div class="flex-1 bg-neutral-100 rounded-full px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 md:py-1.5">
+                      <p class="text-[4px] sm:text-[5px] md:text-[8px] text-neutral-400">Type a message...</p>
+                    </div>
+                    <div id="hero-mic" class="relative flex items-center justify-center">
+                      <div id="hero-mic-pulse" class="absolute inset-0 rounded-full bg-karon-500/30 scale-0 transition-transform"></div>
+                      <svg class="w-2 sm:w-3 md:w-4 h-2 sm:h-3 md:h-4 text-karon-500 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -455,17 +520,17 @@
   <!-- ======================== BILL CHAOS ======================== -->
   <section class="py-20 md:py-32 bg-neutral-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16 fade-in">
-        <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-neutral-900 mb-6">
+      <div class="text-center mb-10 md:mb-16 fade-in">
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-neutral-900 mb-4 md:mb-6">
           <span data-i18n="chaos-heading">Bills Are Everywhere.</span><br>
           <span class="gradient-text-bold" data-i18n="chaos-highlight">Clarity Is Nowhere.</span>
         </h2>
-        <p class="text-lg text-neutral-700 max-w-2xl mx-auto" data-i18n="chaos-subtitle">
+        <p class="text-base md:text-lg text-neutral-700 max-w-2xl mx-auto" data-i18n="chaos-subtitle">
           Paper receipts pile up. Digital bills scatter across apps. Nobody has a clear picture of where their money goes.
         </p>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-16 fade-in">
+      <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-10 md:mb-16 fade-in">
         <!-- WITHOUT KARON: Scattered receipts -->
         <div class="relative h-[320px] md:h-[400px] bg-gradient-to-br from-red-50 to-neutral-50 rounded-3xl border border-red-200/50 overflow-hidden bill-scene">
           <!-- Receipt 1 -->
@@ -550,27 +615,28 @@
 
       <!-- Pain point cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-2xl p-8 text-center card-hover border border-neutral-200 stagger-reveal" style="--stagger:0">
+        <div class="bg-white rounded-2xl p-5 md:p-8 text-center card-hover border border-neutral-200 stagger-reveal" style="--stagger:0">
           <div class="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
             <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
           </div>
           <h3 class="font-bold text-neutral-900 mb-2" data-i18n="pain-1-title">Receipts Pile Up</h3>
           <p class="text-neutral-600 text-sm" data-i18n="pain-1-desc">Paper bills get lost, damaged, or forgotten. Important expenses slip through the cracks.</p>
         </div>
-        <div class="bg-white rounded-2xl p-8 text-center card-hover border border-neutral-200 stagger-reveal" style="--stagger:1">
+        <div class="bg-white rounded-2xl p-5 md:p-8 text-center card-hover border border-neutral-200 stagger-reveal" style="--stagger:1">
           <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto mb-4">
             <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
           </div>
           <h3 class="font-bold text-neutral-900 mb-2" data-i18n="pain-2-title">Bills Scatter Across Apps</h3>
           <p class="text-neutral-600 text-sm" data-i18n="pain-2-desc">Some bills are on WhatsApp, some in email, some on paper. No single place to see everything.</p>
         </div>
-        <div class="bg-white rounded-2xl p-8 text-center card-hover border border-neutral-200 stagger-reveal" style="--stagger:2">
+        <div class="bg-white rounded-2xl p-5 md:p-8 text-center card-hover border border-neutral-200 stagger-reveal" style="--stagger:2">
           <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
             <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
           <h3 class="font-bold text-neutral-900 mb-2" data-i18n="pain-3-title">No Clear Picture</h3>
           <p class="text-neutral-600 text-sm" data-i18n="pain-3-desc">Where did the money go this month? Without a system, you're always guessing.</p>
         </div>
+
       </div>
     </div>
   </section>
@@ -578,12 +644,12 @@
   <!-- ======================== WHO IS KARON FOR ======================== -->
   <section class="py-20 md:py-32 bg-dark-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16 fade-in">
+      <div class="text-center mb-10 md:mb-16 fade-in">
         <p class="text-karon-400 font-semibold text-sm uppercase tracking-wider mb-3" data-i18n="who-label">Who is Karon for?</p>
         <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-4" data-i18n="who-heading">
           Anyone Who Manages Bills
         </h2>
-        <p class="text-lg text-gray-400 max-w-2xl mx-auto" data-i18n="who-subtitle">
+        <p class="text-base md:text-lg text-gray-400 max-w-2xl mx-auto" data-i18n="who-subtitle">
           From a shopkeeper tracking daily sales to a family managing household expenses.
         </p>
       </div>
@@ -630,12 +696,12 @@
   <!-- ======================== FEATURES ======================== -->
   <section id="features" class="py-20 md:py-32 bg-dark-950">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16 fade-in">
+      <div class="text-center mb-10 md:mb-16 fade-in">
         <p class="text-karon-400 font-semibold text-sm uppercase tracking-wider mb-3" data-i18n="features-label">Features</p>
         <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-4">
           Everything You Need
         </h2>
-        <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+        <p class="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
           Powerful AI features designed for simplicity. Explore what Karon can do.
         </p>
       </div>
@@ -703,13 +769,13 @@
           <p class="text-gray-500 text-sm mb-3">Plug into Tally, Marg, or Busy instantly.</p>
           <span class="text-karon-400 text-sm font-medium group-hover:text-karon-300 transition-colors">Learn more &rarr;</span>
         </a>
-        <!-- 8. Multilingual NLP -->
-        <a href="features.html#languages" class="glass-card rounded-2xl p-6 card-hover stagger-reveal group block" style="--stagger:7">
-          <div class="w-12 h-12 rounded-2xl bg-karon-500/10 flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-karon-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+        <!-- 8. Download Anytime -->
+        <a href="features.html#security" class="glass-card rounded-2xl p-6 card-hover stagger-reveal group block" style="--stagger:7">
+          <div class="w-12 h-12 rounded-2xl bg-teal-500/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
           </div>
-          <h3 class="text-white font-bold mb-2">Multilingual NLP</h3>
-          <p class="text-gray-500 text-sm mb-3">Proprietary AI built for Indian languages.</p>
+          <h3 class="text-white font-bold mb-2">Download Anytime</h3>
+          <p class="text-gray-500 text-sm mb-3">Export any bill, any time. Your data is yours.</p>
           <span class="text-karon-400 text-sm font-medium group-hover:text-karon-300 transition-colors">Learn more &rarr;</span>
         </a>
       </div>
@@ -719,16 +785,16 @@
   <!-- ======================== HOW IT WORKS ======================== -->
   <section id="how-it-works" class="py-20 md:py-32 bg-neutral-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16 fade-in">
+      <div class="text-center mb-10 md:mb-16 fade-in">
         <p class="text-karon-500 font-semibold text-sm uppercase tracking-wider mb-3" data-i18n="how-label">How It Works</p>
         <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-neutral-900 mb-4" data-i18n="how-heading">
           Three Steps. That's It.
         </h2>
-        <p class="text-lg text-neutral-600 max-w-2xl mx-auto" data-i18n="how-subtitle">
+        <p class="text-base md:text-lg text-neutral-600 max-w-2xl mx-auto" data-i18n="how-subtitle">
           No training needed. No complex setup. Download and start within minutes.
         </p>
       </div>
-      <div class="grid md:grid-cols-3 gap-8">
+      <div class="grid md:grid-cols-3 gap-4 md:gap-8">
         <div class="relative stagger-reveal" style="--stagger:0">
           <div class="bg-white rounded-3xl p-8 h-full border border-neutral-200 card-hover">
             <div class="w-12 h-12 rounded-2xl bg-karon-500 text-white flex items-center justify-center text-xl font-bold mb-6">1</div>
@@ -769,18 +835,18 @@
   <!-- ======================== PRICING ======================== -->
   <section id="pricing" class="py-20 md:py-32 bg-dark-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16 fade-in">
+      <div class="text-center mb-10 md:mb-16 fade-in">
         <p class="text-karon-400 font-semibold text-sm uppercase tracking-wider mb-3" data-i18n="pricing-label">Pricing</p>
         <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-4" data-i18n="pricing-heading">
           Analytics Shouldn't Cost a Fortune
         </h2>
-        <p class="text-lg text-gray-400 max-w-2xl mx-auto" data-i18n="pricing-subtitle">
+        <p class="text-base md:text-lg text-gray-400 max-w-2xl mx-auto" data-i18n="pricing-subtitle">
           One simple plan. Everything included. No hidden fees, no lock-in.
         </p>
       </div>
       <div class="max-w-lg mx-auto fade-in">
         <div class="gradient-border">
-          <div class="bg-dark-800 rounded-3xl p-10 relative overflow-hidden">
+          <div class="bg-dark-800 rounded-3xl p-6 md:p-10 relative overflow-hidden">
             <div class="absolute top-4 right-4 bg-karon-500/20 rounded-full px-3 py-1 text-xs font-semibold text-karon-300 backdrop-blur-sm border border-karon-500/20" data-i18n="pricing-tag">
               All-Inclusive
             </div>
@@ -857,14 +923,14 @@
   <!-- ======================== FOOTER ======================== -->
   <footer class="bg-dark-950 text-gray-400 pt-16 pb-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid md:grid-cols-4 gap-8 pb-12 border-b border-white/5">
+      <div class="grid md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pb-12 border-b border-white/5">
         <div class="md:col-span-2">
           <div class="flex items-center gap-2 mb-4">
             <img src="images/Gemini_Generated_Image_z6qyi3z6qyi3z6qy.png" alt="Karon" class="h-14 w-14 object-cover object-top rounded-xl" />
             <span class="text-3xl font-extrabold text-white tracking-tight">Karon</span>
           </div>
           <p class="text-gray-400 leading-relaxed max-w-sm mb-6" data-i18n="footer-desc">
-            AI-powered bill management and expense tracking for everyone. Built with love in India.
+            AI-powered bill management and expense tracking for everyone. Made with love for India.
           </p>
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-1.5">
@@ -905,7 +971,7 @@
         <div class="flex items-center gap-2 text-xs text-gray-500">
           <span>Made with</span>
           <svg class="w-4 h-4 text-karon-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
-          <span>in India</span>
+          <span>for India</span>
         </div>
       </div>
     </div>
@@ -926,10 +992,11 @@
         'nav-features': 'Features', 'nav-languages': 'Languages', 'nav-how': 'How It Works',
         'nav-pricing': 'Pricing', 'nav-cta': 'Get Karon',
         'hero-badge': 'Made for India',
-        'hero-heading-prefix': 'Bill management for',
+        'hero-heading-prefix': 'Karon remembers every bill you\u0027ve ever had.',
+        'hero-heading-prefix2': 'Built for',
         'rotate-1': 'shopkeepers', 'rotate-2': 'freelancers', 'rotate-3': 'families',
         'rotate-4': 'professionals', 'rotate-5': 'MSMEs',
-        'hero-subtitle': 'Snap any bill. Ask any question. Get instant clarity \u2014 in Hindi, Bengali or English. Karon brings AI-powered bill management to your phone.',
+        'hero-subtitle': 'Snap any bill. Ask anything \u2014 "Where did I spend the most last month?" "How much GST did I pay last month?" \u2014 in Hindi, Bengali or English. Karon tracks every rupee so you don\u0027t have to.',
         'hero-cta-primary': 'Download on Play Store', 'hero-cta-secondary': 'See How It Works',
         'badge-lang': 'Languages', 'badge-powered': 'Powered', 'badge-nlp-val': 'Proprietary',
         'badge-nlp': 'NLP Engine', 'badge-learn-val': 'Self', 'badge-learn': 'Learning',
@@ -1005,7 +1072,7 @@
         'cta-heading': 'Your Finances Deserve Better',
         'cta-subtitle': 'Join thousands of Indians who are taking control of their finances \u2014 in their language, on their phone.',
         'cta-download': 'Download on Google Play', 'cta-price': 'Just \u20B9399/month. Everything included.',
-        'footer-desc': 'AI-powered bill management and expense tracking for everyone. Built with love in India.',
+        'footer-desc': 'AI-powered bill management and expense tracking for everyone. Made with love for India.',
         'footer-product': 'Product', 'footer-company': 'Company', 'footer-download': 'Download',
         'footer-about': 'About Us', 'footer-privacy': 'Privacy Policy', 'footer-terms': 'Terms of Service', 'footer-contact': 'Contact',
         'security-badge': 'Secure Cloud Storage', 'security-heading': 'Your Data.', 'security-highlight': ' Always Safe.',
@@ -1023,10 +1090,11 @@
         'nav-features': 'फ़ीचर्स', 'nav-languages': 'भाषाएं', 'nav-how': 'कैसे काम करता है',
         'nav-pricing': 'कीमत', 'nav-cta': 'Karon पाएं',
         'hero-badge': 'भारत के लिए बनाया',
-        'hero-heading-prefix': 'बिल प्रबंधन',
+        'hero-heading-prefix': 'Karon आपका हर बिल याद रखता है।',
+        'hero-heading-prefix2': 'बना है',
         'rotate-1': 'दुकानदारों के लिए', 'rotate-2': 'फ्रीलांसरों के लिए', 'rotate-3': 'परिवारों के लिए',
         'rotate-4': 'प्रोफेशनल्स के लिए', 'rotate-5': 'MSMEs के लिए',
-        'hero-subtitle': 'कोई भी बिल स्कैन करें। कोई भी सवाल पूछें। तुरंत जवाब पाएं \u2014 हिन्दी, बंगला या अंग्रेज़ी में। Karon AI-संचालित बिल प्रबंधन आपके फोन पर लाता है।',
+        'hero-subtitle': 'कोई भी बिल स्कैन करें। कुछ भी पूछें \u2014 "पिछले महीने सबसे ज़्यादा कहां खर्च हुआ?" "पिछले महीने कितना GST दिया?" \u2014 हिन्दी, बंगला या अंग्रेज़ी में। Karon हर रुपया ट्रैक करता है।',
         'hero-cta-primary': 'Play Store से डाउनलोड करें', 'hero-cta-secondary': 'कैसे काम करता है देखें',
         'badge-lang': 'भाषाएं', 'badge-powered': 'संचालित', 'badge-nlp-val': 'स्वदेशी',
         'badge-nlp': 'NLP इंजन', 'badge-learn-val': 'स्वयं', 'badge-learn': 'सीखने वाला',
@@ -1120,10 +1188,11 @@
         'nav-features': 'ফিচার্স', 'nav-languages': 'ভাষা', 'nav-how': 'কিভাবে কাজ করে',
         'nav-pricing': 'মূল্য', 'nav-cta': 'Karon নিন',
         'hero-badge': 'ভারতের জন্য তৈরি',
-        'hero-heading-prefix': 'বিল ম্যানেজমেন্ট',
+        'hero-heading-prefix': 'Karon আপনার প্রতিটি বিল মনে রাখে।',
+        'hero-heading-prefix2': 'তৈরি',
         'rotate-1': 'দোকানদারদের জন্য', 'rotate-2': 'ফ্রিল্যান্সারদের জন্য', 'rotate-3': 'পরিবারের জন্য',
         'rotate-4': 'পেশাদারদের জন্য', 'rotate-5': 'MSMEs-এর জন্য',
-        'hero-subtitle': 'যেকোনো বিল স্ক্যান করুন। যেকোনো প্রশ্ন করুন। সঙ্গে সঙ্গে উত্তর পান \u2014 হিন্দি, বাংলা বা ইংরেজিতে। Karon AI-চালিত বিল ম্যানেজমেন্ট আপনার ফোনে আনে।',
+        'hero-subtitle': 'যেকোনো বিল স্ক্যান করুন। যেকোনো কিছু জিজ্ঞাসা করুন \u2014 "গত মাসে সবচেয়ে বেশি কোথায় খরচ হলো?" "গত মাসে কত GST দিলাম?" \u2014 হিন্দি, বাংলা বা ইংরেজিতে। Karon প্রতিটি টাকা ট্র্যাক করে।',
         'hero-cta-primary': 'Play Store থেকে ডাউনলোড করুন', 'hero-cta-secondary': 'কিভাবে কাজ করে দেখুন',
         'badge-lang': 'ভাষা', 'badge-powered': 'চালিত', 'badge-nlp-val': 'স্বদেশী',
         'badge-nlp': 'NLP ইঞ্জিন', 'badge-learn-val': 'স্ব', 'badge-learn': 'শিক্ষণ',
@@ -1261,11 +1330,119 @@
       btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
     });
 
+    // ---- HERO CHAT TYPING ANIMATION ----
+    (function() {
+      const chatContainer = document.getElementById('hero-chat');
+      if (!chatContainer) return;
+
+      const conversations = [
+        {
+          question: 'goto mase koto khoroch holo?',
+          reply: '<p class="text-[4px] sm:text-[6px] md:text-[9px] text-neutral-700 leading-relaxed mb-0.5">আপনার গত মাসে মোট ₹15,800 খরচ হয়েছে:</p><ul class="text-[3.5px] sm:text-[5px] md:text-[8px] text-neutral-600 space-y-0.5 pl-1.5"><li>• শর্মা জেনারেল স্টোর — ₹6,200</li><li>• পটেল ইলেক্ট্রিক্যালস — ₹4,800</li><li>• রহমান ট্রেডার্স — ₹4,800</li></ul>'
+        },
+        {
+          question: 'koto gst deachi?',
+          reply: '<p class="text-[4px] sm:text-[6px] md:text-[9px] text-neutral-700 leading-relaxed mb-0.5">আপনার গত মাসে মোট GST ₹2,370:</p><ul class="text-[3.5px] sm:text-[5px] md:text-[8px] text-neutral-600 space-y-0.5 pl-1.5"><li>• শর্মা জেনারেল স্টোর — ₹930</li><li>• পটেল ইলেক্ট্রিক্যালস — ₹864</li><li>• রহমান ট্রেডার্স — ₹576</li></ul>'
+        },
+        {
+          question: 'sobche boro khorch ki chilo goto mase?',
+          reply: '<p class="text-[4px] sm:text-[6px] md:text-[9px] text-neutral-700 leading-relaxed mb-0.5">গত মাসে সবচেয়ে বড় খরচ:</p><p class="text-[4px] sm:text-[6px] md:text-[9px] text-neutral-700 font-semibold">শর্মা জেনারেল স্টোর — ₹6,200</p>'
+        }
+      ];
+
+      const phoneEl = document.getElementById('hero-phone');
+      let chatStarted = false;
+
+      function clearDynamic() {
+        chatContainer.querySelectorAll('.chat-dynamic').forEach(el => el.remove());
+      }
+
+      function micPulse(cb) {
+        if (phoneEl) phoneEl.classList.add('mic-recording');
+        setTimeout(() => {
+          if (phoneEl) phoneEl.classList.remove('mic-recording');
+          if (cb) cb();
+        }, 1200);
+      }
+
+      function typeQuestion(text, cb) {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-dynamic flex justify-end mb-1 sm:mb-1.5 md:mb-2 chat-msg';
+        const bubble = document.createElement('div');
+        bubble.className = 'bg-karon-500 text-white rounded-lg sm:rounded-xl px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 max-w-[85%]';
+        const micIcon = document.createElement('div');
+        micIcon.className = 'flex items-center gap-0.5 mb-0.5';
+        micIcon.innerHTML = '<svg class="w-[5px] sm:w-[7px] md:w-[10px] h-[5px] sm:h-[7px] md:h-[10px] text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg><span class="text-[3px] sm:text-[4px] md:text-[6px] text-white/60">voice</span>';
+        bubble.appendChild(micIcon);
+        const p = document.createElement('p');
+        p.className = 'text-[4px] sm:text-[6px] md:text-[9px] leading-relaxed';
+        bubble.appendChild(p);
+        wrap.appendChild(bubble);
+        chatContainer.appendChild(wrap);
+
+        let i = 0;
+        const interval = setInterval(() => {
+          p.textContent += text[i];
+          i++;
+          if (i >= text.length) { clearInterval(interval); if (cb) setTimeout(cb, 400); }
+        }, 60);
+      }
+
+      function showTypingDots(cb) {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-dynamic mb-1 sm:mb-1.5 md:mb-2 chat-msg typing-wrap';
+        wrap.innerHTML = '<div class="bg-neutral-100 rounded-lg sm:rounded-xl px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 max-w-[80%]"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+        chatContainer.appendChild(wrap);
+        setTimeout(() => { wrap.remove(); if (cb) cb(); }, 1500);
+      }
+
+      function showReply(html, cb) {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-dynamic mb-1 sm:mb-1.5 md:mb-2 chat-msg';
+        wrap.innerHTML = '<div class="bg-karon-50 border border-karon-100 rounded-lg sm:rounded-xl px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 max-w-[90%]">' + html + '</div>';
+        chatContainer.appendChild(wrap);
+        if (cb) setTimeout(cb, 2500);
+      }
+
+      function playStep(idx, cb) {
+        micPulse(() => {
+          typeQuestion(conversations[idx].question, () => {
+            showTypingDots(() => {
+              showReply(conversations[idx].reply, cb);
+            });
+          });
+        });
+      }
+
+      function runFlow() {
+        playStep(0, () => {
+          playStep(1, () => {
+            playStep(2, () => {
+              setTimeout(() => { clearDynamic(); runFlow(); }, 3000);
+            });
+          });
+        });
+      }
+
+      // Trigger on scroll into view
+      const chatObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !chatStarted) {
+            chatStarted = true;
+            setTimeout(runFlow, 800);
+            chatObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+      chatObserver.observe(chatContainer);
+    })();
+
     // ---- INTERSECTION OBSERVER ----
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
 
           // Bill organized transition
           if (entry.target.id === 'bill-organized-container') {
@@ -1278,7 +1455,6 @@
             const pct = entry.target.querySelector('.learning-percent');
             if (bar) {
               bar.classList.add('animate');
-              // Animate percentage text
               let current = 0;
               const interval = setInterval(() => {
                 current += 1;
